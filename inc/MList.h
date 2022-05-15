@@ -1,74 +1,46 @@
-#ifndef MATRIXITERATOS_ITERATORINTERFACE_H
-#define MATRIXITERATOS_ITERATORINTERFACE_H
+#ifndef MATRIXITERATOS_MLIST_H
+#define MATRIXITERATOS_MLIST_H
+//#include "Sorter.h"
+//#include "Loader.h"
+#include "Loader.h"
+#include "IIterator.h"
 #include "Sorter.h"
-//#include "IteratorInterface.h"
-
+#include "string"
 enum class typeLoader{consoleLoader = 0, fileLoader};
 enum class typeSort{quick = 0, shell, bubble};
 
-class IteratorInterface
-{
-public:
-    virtual IteratorInterface& first() = 0;
-    virtual IteratorInterface& next() = 0;
-    virtual ~IteratorInterface(){};
-};
-
 class MatrixList
 {
-private:
-    struct matrixNode
-    {
-        explicit matrixNode(Matrix data):storageMatrix{std::move(data)}, nextNodeMatrix{nullptr}{};
-        Matrix storageMatrix;
-        matrixNode* nextNodeMatrix;
-        ~matrixNode(){};
-    };
 public:
-    class Iterator: public IteratorInterface
-    {
-    public:
-        Iterator(matrixNode* initNode): iteratorNode{initNode}{};
-        Iterator& first() override
-        {
-            return *this;
-        };
-        Iterator& next() override
-        {
-            iteratorNode = iteratorNode->nextNodeMatrix;
-            return *this;
-        };
-        Matrix operator*() const {return iteratorNode->storageMatrix;};
-    private:
-        matrixNode* iteratorNode;
-    };
+    using iterator = fIterator;
 public:
-    MatrixList();
-    void addItem(typeLoader type);
+    explicit MatrixList(typeLoader loader = typeLoader::consoleLoader);
+    void addItem();
     void sort(typeSort type);
-
-    Iterator begin() {return Iterator(head);};
-    Iterator end(){return Iterator(nullptr);};
-    void remove();
-    void loadMatrix();
-    size_t getSize() const {return size;};
+    iterator begin();
+    iterator end();
+    void removeItem(size_t index);
+    Matrix& operator[](size_t);
+    void print_list();
+    size_t size() const {return containerSize;};
+    void setFileName(const std::string& filename);
     ~MatrixList();
 private:
-    void addItem(ILoader* loader);
-    void sort(ISorter* sorter);
+    void checkValidIndex(size_t index) const;
+    void sortersInit(typeSort tSort);
+    void loadersInit();
+    void reallocMemory();
 private:
-    matrixNode* head;
-    ISorter* matrixQuickSorter;
-    ISorter* matrixShellSorter;
-    ISorter* matrixBubbleSorter;
-    ILoader* matrixConsoleLoader;
-    ILoader* matrixFileLoader;
-    size_t size;
+    containerCell* containerData;
+    size_t containerSize;
+    size_t maxSize;
+    size_t capacity;
+    typeLoader tLoader;
+    ISorter* matrixSorter;
+    ILoader* matrixLoader;
+    private:
+    containerCell* iteratorNode;
+
 };
 
-
-
-
-
-
-#endif //MATRIXITERATOS_ITERATORINTERFACE_H
+#endif //MATRIXITERATOS_MLIST_H

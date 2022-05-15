@@ -1,55 +1,60 @@
-#include "IteratorInterface.h"
-MatrixList::MatrixList(): head{nullptr}
-{
-    matrixConsoleLoader = new ConsoleLoader();
-    matrixFileLoader = new FileLoader();
-    matrixQuickSorter = new QuickSort();
-    matrixShellSorter = new ShellSort();
-    matrixBubbleSorter = new BubbleSort();
-};
-//-1. Add item
-void MatrixList::addItem(typeLoader type)
-{
-    switch (type) {
-        case(typeLoader::consoleLoader):
-        {
-            addItem(matrixConsoleLoader);
-        }break;
-        case(typeLoader::fileLoader):
-        {
-            addItem(matrixFileLoader);
-        }break;
-        default:
-        {
-            return;
-        }
-    }
-}
-void MatrixList::addItem(ILoader* loader)
-{
-    auto node = new matrixNode(loader->loadMatrix());
-    //connection with old node
-    node->nextNodeMatrix = head;
-    //new node became head
-    head = node;
-}
-//-2.Sort Items
+#include "MList.h"
+#include "iostream"
 
-void MatrixList::sort(typeSort type)
+
+MatrixList::MatrixList(typeLoader loader):tLoader{loader}, capacity{10}, maxSize{10}, containerSize{0}
 {
-    switch (type)
+    containerData = new containerCell[capacity];
+    loadersInit();
+};
+
+MatrixList::iterator MatrixList::begin()
+{
+    return fIterator(containerData);
+}
+
+MatrixList::iterator MatrixList::end()
+{
+    return fIterator(&containerData[containerSize]);
+}
+//-1. Add item
+void MatrixList::addItem()
+{
+    if(containerSize == maxSize)
+    {
+        reallocMemory();
+    }
+    containerData[containerSize] = matrixLoader->loadMatrix();
+    ++containerSize;
+}
+
+void MatrixList::reallocMemory()
+{
+    containerCell* buffer{containerData};
+    containerData = new containerCell [maxSize + capacity];
+    for(size_t i = 0, end = maxSize; i < maxSize; ++i)
+    {
+        containerData[i] = buffer[i];
+    }
+    maxSize += capacity;
+    delete [] buffer;
+}
+
+void MatrixList::sortersInit(typeSort tSort)
+{
+    switch (tSort)
     {
         case(typeSort::quick):
         {
-            sort(matrixQuickSorter);
+            matrixSorter = new QuickSort();;
         }break;
         case(typeSort::shell):
         {
-            sort(matrixShellSorter);
+            matrixSorter = new ShellSort();;
         }break;
         case(typeSort::bubble):
         {
-            sort(matrixBubbleSorter);
+            matrixSorter = new BubbleSort();
         }break;
         default:
         {
@@ -58,29 +63,78 @@ void MatrixList::sort(typeSort type)
     }
 }
 
-
-
-void MatrixList::remove()
+void MatrixList::loadersInit()
 {
-    if(head)
+    switch(tLoader)
     {
-        matrixNode* nHead = head->nextNodeMatrix;
-        delete head;
-        head = nHead;
+        case(typeLoader::fileLoader):
+        {
+            matrixLoader = new FileLoader();
+        }break;
+        case(typeLoader::consoleLoader):
+        {
+            matrixLoader = new ConsoleLoader();
+        }break;
+        default:
+        {
+            return;
+        }
+    }
+}
+
+Matrix& MatrixList::operator[](size_t index)
+{
+    checkValidIndex(index);
+    return containerData[index].second;
+}
+
+void MatrixList::removeItem(size_t index)
+{
+    checkValidIndex(index);
+    size_t ShiftPoint{index};
+    while(ShiftPoint <= containerSize - 2)
+    {
+        containerData[ShiftPoint] = containerData[ShiftPoint + 1];
+        ++ShiftPoint;
+    }
+    containerData[containerSize - 1].second.~Matrix();
+    containerData[containerSize - 1].first.clear();
+    --containerSize;
+}
+
+void MatrixList::sort(typeSort type)
+{
+    sortersInit(type);
+    matrixSorter->sort(begin(), end());
+    delete matrixSorter;
+}
+
+void MatrixList::print_list()
+{
+    for(size_t i = 0; i<containerSize; ++i)
+    {
+        std::cout << containerData[i].first << " ";
+    }
+    std::cout << std::endl;
+}
+
+void MatrixList::setFileName(const std::string &filename)
+{
+    matrixLoader->setFileName(filename);
+}
+
+void MatrixList::checkValidIndex(size_t index) const
+{
+    if(index >= containerSize)
+    {
+        throw MemoryAllow();
     }
 }
 
 MatrixList::~MatrixList()
 {
-    delete matrixConsoleLoader;
-    delete matrixFileLoader;
-    delete matrixQuickSorter;
-    delete matrixShellSorter;
-    delete matrixBubbleSorter;
-    while(head)
-    {
-        remove();
-    }
+    delete matrixLoader;
+    delete [] containerData;
 }
 
 
