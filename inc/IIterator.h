@@ -1,0 +1,8 @@
+//
+// Created by Serhii Zaika on 13.05.2022.
+//
+
+#ifndef MATRIXITERATOS_IITERATOR_H
+#define MATRIXITERATOS_IITERATOR_H
+
+#endif //MATRIXITERATOS_IITERATOR_H
