@@ -28,9 +28,6 @@ containerCell ConsoleLoader::loadMatrix()
 
     Matrix processMatrix(getter_matrix.c_str());
 
-//    std::cout << "Please give the name to input matrix"<< std::endl;
-//    std::cin >> MatrixName;
-//    setFileName(MatrixName);
     auto [isPresent, where] = isInCache(cacheBuffer, filename);
     if(!isPresent)
     {

@@ -19,15 +19,6 @@ void ISorter::try_shift_value(containerCell* sortList, size_t position, size_t i
     }
 }
 
-int ISorter::size_estimation(fIterator startIt, fIterator endIt) {
-    size_t counter{0};
-    while (startIt != endIt) {
-        startIt.next();
-        ++counter;
-    }
-    return counter;
-}
-
 std::tuple<float, float> ISorter::GetComparisonValues(const Matrix& lcomp, const Matrix& rcomp) const
 {
     float lDiagonalsSum{lcomp.getSumDiagonalsResult()};
@@ -62,12 +53,11 @@ int QuickSort::partition(containerCell * arrangeList, int low, int high)
     return (position + 1);
 }
 
-void QuickSort::sort(fIterator startIt, fIterator endIt)
+void QuickSort::sort(containerCell *startIt, int size)
 {
     startListPos = 0;
-    stopListPos = size_estimation(startIt, endIt) - 1;
-    containerCell* a = &(*startIt);
-    Qsort(a, startListPos, stopListPos);
+    stopListPos = size - 1;
+    Qsort(startIt, startListPos, stopListPos);
 }
 
 void QuickSort::Qsort(containerCell * sortList, int low, int high)
@@ -80,10 +70,10 @@ void QuickSort::Qsort(containerCell * sortList, int low, int high)
     }
 }
 
-void BubbleSort::sort(fIterator startIt, fIterator endIt)
+void BubbleSort::sort(containerCell *startIt, int size)
 {
-    size_t stop_pos = size_estimation(startIt, endIt);
-    containerCell* sortList = &(*startIt);
+    size_t stop_pos = size;
+    containerCell* sortList = startIt;
     for (size_t run_counter = 0; run_counter < stop_pos - 1; run_counter++)
     {
         for (size_t counter = 0; counter < stop_pos - run_counter - 1; counter++)
@@ -98,11 +88,10 @@ void BubbleSort::sort(fIterator startIt, fIterator endIt)
     }
 }
 
-void ShellSort::sort(fIterator startIt, fIterator endIt)
+void ShellSort::sort(containerCell *startIt, int size)
 {
     constexpr size_t step_modificator{2};
-    size_t size = size_estimation(startIt, endIt);
-    containerCell * sortList = &(*startIt);
+    containerCell * sortList = startIt;
     size_t interval{static_cast<size_t>(size / step_modificator)};
     bool success_check_sort{false};
     while(!success_check_sort)

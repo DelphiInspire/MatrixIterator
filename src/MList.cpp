@@ -2,20 +2,21 @@
 #include "iostream"
 
 
-MatrixList::MatrixList(typeLoader loader):tLoader{loader}, capacity{10}, maxSize{10}, containerSize{0}
+MatrixList::MatrixList(typeLoader loader, typeSort sorter):tLoader{loader}, tSorter{sorter}, capacity{initCapacity}, maxSize{maxInitSize}, containerSize{zeroSize}
 {
     containerData = new containerCell[capacity];
     loadersInit();
+    sortersInit();
 };
 
 MatrixList::iterator MatrixList::begin()
 {
-    return fIterator(containerData);
+    return FIterator(containerData);
 }
 
 MatrixList::iterator MatrixList::end()
 {
-    return fIterator(&containerData[containerSize]);
+    return FIterator(&containerData[containerSize]);
 }
 //-1. Add item
 void MatrixList::addItem()
@@ -40,17 +41,17 @@ void MatrixList::reallocMemory()
     delete [] buffer;
 }
 
-void MatrixList::sortersInit(typeSort tSort)
+void MatrixList::sortersInit()
 {
-    switch (tSort)
+    switch (tSorter)
     {
         case(typeSort::quick):
         {
-            matrixSorter = new QuickSort();;
+            matrixSorter = new QuickSort();
         }break;
         case(typeSort::shell):
         {
-            matrixSorter = new ShellSort();;
+            matrixSorter = new ShellSort();
         }break;
         case(typeSort::bubble):
         {
@@ -104,9 +105,7 @@ void MatrixList::removeItem(size_t index)
 
 void MatrixList::sort(typeSort type)
 {
-    sortersInit(type);
-    matrixSorter->sort(begin(), end());
-    delete matrixSorter;
+    matrixSorter->sort(containerData, containerSize);
 }
 
 void MatrixList::print_list()
@@ -135,6 +134,7 @@ MatrixList::~MatrixList()
 {
     delete matrixLoader;
     delete [] containerData;
+    delete matrixSorter;
 }
 
 
