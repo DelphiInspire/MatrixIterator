@@ -12,8 +12,7 @@ set(SOURCES main.cpp
         src/Sorter.cpp
         src/Loader.cpp
         src/MList.cpp
-        src/Matrix.cpp
-        src/IIterator.cpp)
+        src/Matrix.cpp)
 
 add_executable(${TARGET_NAME}
                 ${SOURCES})

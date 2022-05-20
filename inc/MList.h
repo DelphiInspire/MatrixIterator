@@ -6,6 +6,7 @@
 #include "Sorter.h"
 #include "string"
 
+
 enum class typeLoader{consoleLoader = 0, fileLoader};
 enum class typeSort{quick = 0, shell, bubble};
 
@@ -46,7 +47,7 @@ public:
 public:
     explicit MatrixList(typeLoader loader = typeLoader::consoleLoader, typeSort sorter =typeSort::quick);
     void addItem();
-    void sort(typeSort type);
+    void sort();
     iterator begin();
     iterator end();
     void removeItem(size_t index);
@@ -58,6 +59,7 @@ public:
 private:
     void checkValidIndex(size_t index) const;
     void sortersInit();
+
     void loadersInit();
     void reallocMemory();
 private:
@@ -69,9 +71,8 @@ private:
     typeSort tSorter;
     ISorter* matrixSorter;
     ILoader* matrixLoader;
-    private:
+private:
     containerCell* iteratorNode;
-
 };
 
 #endif //MATRIXITERATOS_MLIST_H

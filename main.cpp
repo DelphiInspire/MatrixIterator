@@ -3,6 +3,7 @@
 
 int main()
 {
+//
 //    MatrixList consoleMatrix;
 //    consoleMatrix.setFileName("a");
 //    consoleMatrix.addItem();
@@ -13,7 +14,7 @@ int main()
 //    consoleMatrix.setFileName("d");
 //    consoleMatrix.addItem();
 //    consoleMatrix.print_list();
-//    consoleMatrix.sort(typeSort::bubble);
+//    consoleMatrix.sort();
 //    consoleMatrix.print_list();
 
     MatrixList fileMatrix(typeLoader::fileLoader);
@@ -24,7 +25,8 @@ int main()
     fileMatrix.setFileName("dataMatrix_2.txt");
     fileMatrix.addItem();
     fileMatrix.print_list();
-    fileMatrix.sort(typeSort::quick);
+    fileMatrix.sort();
+
     fileMatrix.print_list();
     return 0;
 }

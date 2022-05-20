@@ -1,13 +1,12 @@
 #include "MList.h"
 #include "iostream"
 
-
 MatrixList::MatrixList(typeLoader loader, typeSort sorter):tLoader{loader}, tSorter{sorter}, capacity{initCapacity}, maxSize{maxInitSize}, containerSize{zeroSize}
 {
     containerData = new containerCell[capacity];
     loadersInit();
     sortersInit();
-};
+}
 
 MatrixList::iterator MatrixList::begin()
 {
@@ -103,7 +102,7 @@ void MatrixList::removeItem(size_t index)
     --containerSize;
 }
 
-void MatrixList::sort(typeSort type)
+void MatrixList::sort()
 {
     matrixSorter->sort(containerData, containerSize);
 }
