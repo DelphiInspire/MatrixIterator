@@ -4,7 +4,6 @@
 #include<cmath>
 #include"Exception.h"
 
-
 class Matrix
 {
 public:
@@ -40,6 +39,8 @@ public:
 	Matrix operator/(const char* const inString) const;
 	Matrix* operator/=(const Matrix& divideMatrix);
 	Matrix* operator/=(const float divideMember);
+
+    bool operator==(const Matrix& comparisonMatrix) const;
 	
 	friend bool operator>(const Matrix& lhsMatrix, const Matrix& rhsMatrix) 
 	{ 
@@ -60,17 +61,6 @@ public:
 	{
 		return !(lhsMatrix.getSum() > rhsMatrix.getSum());
 	}
-
-	friend bool operator==(const Matrix& lhsMatrix, const Matrix& rhsMatrix)
-	{
-		return lhsMatrix.getSum() == rhsMatrix.getSum();
-	}
-
-	friend bool operator!=(const Matrix& lhsMatrix, const Matrix& rhsMatrix)
-	{
-		return !(lhsMatrix.getSum() == rhsMatrix.getSum());
-	}
-
 	~Matrix();
 private:
 	size_t rows; 
@@ -99,5 +89,3 @@ protected:
 	bool isPlusOverflow(const float firstMember, const float secondMember) const;
 	bool isMinusOverflow(const float firstMember, const float secondMember) const;
 };
-
-using containerCell = std::pair<std::string, Matrix>;

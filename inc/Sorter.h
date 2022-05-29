@@ -1,27 +1,32 @@
-////#include "MList.h"
-#include "IIterator.h"
+#include <tuple>
+
+class Matrix;
+class IteratorInterface;
 
 class ISorter
 {
 public:
-    virtual void sort(fIterator startIt, fIterator endIt) = 0;
+    virtual void sort(Matrix* matrixContainer, int size) = 0;
+    virtual ~ISorter(){};
 protected:
     virtual std::tuple<float, float> GetComparisonValues(const Matrix& lcomp, const Matrix& rcomp) const;
-    virtual void try_shift_value(containerCell * array, size_t position, size_t interval);
-    int size_estimation(fIterator startIt, fIterator endIt);
-    virtual void swap(containerCell * input_1, containerCell * input_2);
-public:
-    virtual ~ISorter(){};
+    virtual void try_shift_value(Matrix* array, size_t position, size_t interval);
+    virtual void swap(Matrix* input_1, Matrix* input_2);
+protected:
+    int sortSize;
+    IteratorInterface* startPoint;
+    IteratorInterface* stopPoint;
 };
 
 class QuickSort: public ISorter
 {
 public:
-    QuickSort() { };
-    void sort(fIterator startIt, fIterator endIt) override;
+    QuickSort() = default;
+    void sort(Matrix* startIt, int size) override;
+    ~QuickSort(){};
 private:
-    void Qsort(containerCell * sortList, int low, int high);
-    int partition(containerCell * arrangeList, int low, int high);
+    void Qsort(Matrix* sortList, int low, int high);
+    int partition(Matrix* arrangeList, int low, int high);
 private:
     int startListPos;
     int stopListPos;
@@ -30,13 +35,15 @@ private:
 class BubbleSort: public ISorter
 {
 public:
-    void sort(fIterator startIt, fIterator endIt) override;
+    BubbleSort() = default;
+    void sort(Matrix* startIt, int size) override;
 };
 
 class ShellSort: public ISorter
 {
 public:
-    void sort(fIterator startIt, fIterator endIt) override;
+    ShellSort() = default;
+    void sort(Matrix* startIt, int size) override;
 };
 
 

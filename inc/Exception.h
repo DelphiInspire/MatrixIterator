@@ -1,5 +1,6 @@
 #ifndef FILESSORT_EXCEPTION_H
 #define FILESSORT_EXCEPTION_H
+
 class Exception
 {
 private:

@@ -1,12 +1,13 @@
 #include "Loader.h"
+#include "Matrix.h"
 #include "iostream"
 
-std::tuple<bool, size_t> ILoader::isInCache(const std::vector<containerCell>& cache, const std::string& name)
+std::tuple<bool, size_t> ILoader::isInCache(const Matrix& comparisonMatrix) const
 {
 
-    for (size_t searcher_id = 0; searcher_id < cache.size(); ++searcher_id)
+    for (size_t searcher_id = 0, stopPos = cacheBuffer.size(); searcher_id < stopPos; ++searcher_id)
     {
-        if (cache.at(searcher_id).first == name)
+        if (cacheBuffer.at(searcher_id) == comparisonMatrix)
         {
              return std::make_tuple(true, searcher_id);
         }
@@ -14,36 +15,7 @@ std::tuple<bool, size_t> ILoader::isInCache(const std::vector<containerCell>& ca
     return std::make_tuple(false, 0);
 }
 
-void ConsoleLoader::setFileName(const std::string &fileName)
-{
-    filename = fileName;
-}
-
-containerCell ConsoleLoader::loadMatrix()
-{
-    std::string getter_matrix;
-    std::string MatrixName;
-    std::cout << "Please enter matrix:" << std::endl;
-    std::cin >> getter_matrix;
-
-    Matrix processMatrix(getter_matrix.c_str());
-
-//    std::cout << "Please give the name to input matrix"<< std::endl;
-//    std::cin >> MatrixName;
-//    setFileName(MatrixName);
-    auto [isPresent, where] = isInCache(cacheBuffer, filename);
-    if(!isPresent)
-    {
-        cacheBuffer.emplace_back(std::make_pair(filename, processMatrix));
-        return std::make_pair(cacheBuffer.back().first, cacheBuffer.back().second);
-    }
-    else
-    {
-        return std::make_pair(filename, std::move(processMatrix));
-    }
-}
-
-void ConsoleLoader::clear_cache()
+void ILoader::clear_cache()
 {
     if (!cacheBuffer.empty())
     {
@@ -51,41 +23,57 @@ void ConsoleLoader::clear_cache()
     }
 }
 
-containerCell FileLoader::loadMatrix()
+std::vector<Matrix>& ILoader::getCache()
 {
-    if(filename.empty())
+    return cacheBuffer;
+}
+
+void ILoader::cacheMatrix(const Matrix &cacheCandidate)
+{
+    auto [isPresent, where] = isInCache(cacheCandidate);
+    if(!isPresent)
+    {
+        cacheBuffer.emplace_back(cacheCandidate);
+    }
+}
+
+void ILoader::setFileName(const std::string &fileName)
+{
+    name = fileName;
+}
+
+Matrix ConsoleLoader::loadMatrix()
+{
+    std::string getter_matrix;
+    std::string MatrixName;
+
+    std::cout << "Please enter matrix:" << std::endl;
+    std::cin >> getter_matrix;
+
+    Matrix processMatrix(getter_matrix.c_str());
+    cacheMatrix(processMatrix);
+    return processMatrix;
+}
+
+FileLoader::FileLoader(const std::string& fileName): path{std::filesystem::absolute(fileName)}{};
+
+Matrix FileLoader::loadMatrix()
+{
+    path = std::filesystem::absolute(name);
+    if(path.empty())
     {
         throw PathEmpty();
     }
-    auto [isPresent, where] = isInCache(cacheBuffer, filename);
-    if(!isPresent) {
-        std::ifstream read_thread;
-        std::string getter_matrix;
-        read_thread.open(path);
-        if (read_thread.is_open()) {
-            read_thread >> getter_matrix;
-        }
-        read_thread.close();
-        cacheBuffer.emplace_back(std::make_pair(path, Matrix(getter_matrix.c_str())));
-        return cacheBuffer.at(cacheBuffer.size() - 1);
-    }
-    else
+    std::ifstream read_thread;
+    std::string getter_matrix;
+    read_thread.open(path);
+    if (read_thread.is_open())
     {
-        return cacheBuffer.at(where);
+        read_thread >> getter_matrix;
     }
-}
+    read_thread.close();
+    Matrix processMatrix(getter_matrix.c_str());
 
-void FileLoader::setFileName(const std::string &file_name)
-{
-    filename = file_name;
-    path = std::filesystem::absolute(file_name);
-}
-
-void FileLoader::clear_cache()
-{
-
-    if(!cacheBuffer.empty())
-    {
-        cacheBuffer.clear();
-    }
+    cacheMatrix(processMatrix);
+    return processMatrix;
 }

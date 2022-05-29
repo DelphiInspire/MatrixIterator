@@ -1,6 +1,8 @@
 #ifndef MATRIXITERATOS_IITERATOR_H
 #define MATRIXITERATOS_IITERATOR_H
-#include "Matrix.h"
+class Matrix;
+
+
 class IteratorInterface
 {
 public:
@@ -9,17 +11,18 @@ public:
     virtual ~IteratorInterface(){};
 };
 
-class fIterator: public IteratorInterface
+
+class FIterator: public IteratorInterface
 {
 public:
-    fIterator(containerCell* initNode);
-    fIterator& first() override;
-    fIterator& next() override;
-    bool operator!=(const fIterator&) const;
-    bool operator==(const fIterator&) const;
-    containerCell& operator*() const;
+    explicit FIterator(Matrix* initNode);
+    FIterator& first() override;
+    FIterator& next() override;
+    bool operator!=(const FIterator& rhsIterator) const;
+    bool operator==(const FIterator& rhsIterator) const;
+    Matrix& operator*() const;
 private:
-    containerCell* iteratorNode;
+    Matrix* iteratorNode;
 };
 
 #endif //MATRIXITERATOS_IITERATOR_H
