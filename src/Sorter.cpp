@@ -1,17 +1,19 @@
-#include "Sorter.h"
 
-void ISorter::swap(containerCell * input_1, containerCell * input_2){
-    containerCell buffer = *input_1;
+#include "Sorter.h"
+#include "Matrix.h"
+
+void ISorter::swap(Matrix * input_1, Matrix * input_2){
+    Matrix buffer = *input_1;
     *input_1 = *input_2;
     *input_2 = buffer;
 }
 
-void ISorter::try_shift_value(containerCell* sortList, size_t position, size_t interval)
+void ISorter::try_shift_value(Matrix* sortList, size_t position, size_t interval)
 {
     for (int left_counter = position - interval, right_counter = position; left_counter >= 0; right_counter = left_counter, left_counter -= interval)
     {
-        auto [left_Matrix, right_Matrix] = GetComparisonValues(sortList[left_counter].second,
-                                                                            sortList[right_counter].second);
+        auto [left_Matrix, right_Matrix] = GetComparisonValues(sortList[left_counter],
+                                                                            sortList[right_counter]);
         if(right_Matrix <= left_Matrix)
         {
             swap(&sortList[right_counter], &sortList[left_counter]);
@@ -35,13 +37,13 @@ std::tuple<float, float> ISorter::GetComparisonValues(const Matrix& lcomp, const
     }
 }
 
-int QuickSort::partition(containerCell * arrangeList, int low, int high)
+int QuickSort::partition(Matrix* arrangeList, int low, int high)
 {
     int position = low - 1;
     for (size_t i = low; i < high; ++i) {
         //choose the way to comparison
-        auto [step_comparator, pivot] = GetComparisonValues(arrangeList[i].second,
-                                                                        arrangeList[high].second);
+        auto [step_comparator, pivot] = GetComparisonValues(arrangeList[i],
+                                                                        arrangeList[high]);
         //rearranging array
         if (step_comparator <= pivot)
         {
@@ -53,14 +55,14 @@ int QuickSort::partition(containerCell * arrangeList, int low, int high)
     return (position + 1);
 }
 
-void QuickSort::sort(containerCell *startIt, int size)
+void QuickSort::sort(Matrix* startIt, int size)
 {
     startListPos = 0;
     stopListPos = size - 1;
     Qsort(startIt, startListPos, stopListPos);
 }
 
-void QuickSort::Qsort(containerCell * sortList, int low, int high)
+void QuickSort::Qsort(Matrix* sortList, int low, int high)
 {
     if(low < high)
     {
@@ -70,16 +72,16 @@ void QuickSort::Qsort(containerCell * sortList, int low, int high)
     }
 }
 
-void BubbleSort::sort(containerCell *startIt, int size)
+void BubbleSort::sort(Matrix* startIt, int size)
 {
     size_t stop_pos = size;
-    containerCell* sortList = startIt;
+    Matrix* sortList = startIt;
     for (size_t run_counter = 0; run_counter < stop_pos - 1; run_counter++)
     {
         for (size_t counter = 0; counter < stop_pos - run_counter - 1; counter++)
         {
-            auto [l_member, r_member] = GetComparisonValues(sortList[counter].second,
-                                                            sortList[counter + 1].second);
+            auto [l_member, r_member] = GetComparisonValues(sortList[counter],
+                                                            sortList[counter + 1]);
             if (l_member >= r_member)
             {
                 swap(&sortList[counter], &sortList[counter + 1]);
@@ -88,10 +90,10 @@ void BubbleSort::sort(containerCell *startIt, int size)
     }
 }
 
-void ShellSort::sort(containerCell *startIt, int size)
+void ShellSort::sort(Matrix* startIt, int size)
 {
     constexpr size_t step_modificator{2};
-    containerCell * sortList = startIt;
+    Matrix* sortList = startIt;
     size_t interval{static_cast<size_t>(size / step_modificator)};
     bool success_check_sort{false};
     while(!success_check_sort)
@@ -102,8 +104,8 @@ void ShellSort::sort(containerCell *startIt, int size)
         }
         for(size_t left_counter = 0, right_counter = interval;  right_counter < size; left_counter++, right_counter = left_counter + interval)
         {
-            auto [left_Matrix, right_Matrix] = GetComparisonValues(sortList[left_counter].second,
-                                                                   sortList[right_counter].second);
+            auto [left_Matrix, right_Matrix] = GetComparisonValues(sortList[left_counter],
+                                                                   sortList[right_counter]);
             if (left_Matrix >= right_Matrix)
             {
                 try_shift_value(sortList, right_counter, interval);

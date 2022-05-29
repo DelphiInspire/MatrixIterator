@@ -267,6 +267,24 @@ Matrix* Matrix::operator/=(const float divideMember)
     return this;
 }
 
+bool Matrix::operator==(const Matrix& comparisonMatrix) const
+{
+    if(rows != comparisonMatrix.rows || columns != comparisonMatrix.columns)
+        return false;
+    else
+    {
+        for(size_t row = 0; row < rows; ++row)
+        {
+            for(size_t colm = 0; colm < columns; ++colm)
+            {
+                if(storageData[row][colm] != comparisonMatrix.storageData[row][colm])
+                    return false;
+            }
+        }
+    }
+    return true;
+}
+
 void Matrix::getMemory()
 {
     storageData = new float* [rows];
